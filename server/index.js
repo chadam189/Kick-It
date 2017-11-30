@@ -1,4 +1,7 @@
 const express = require('express');
+const session = require('express-session');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const bodyParser = require('body-parser');
 const request = require('request');
 const path = require('path');
@@ -7,12 +10,81 @@ const Promise = require('bluebird');
 
 const PORT = process.env.PORT || 3000;
 const moment = require('moment');
-const { APIKEY } = require('../config.js');
+const {
+  APIKEY,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+} = require('../config.js');
 
 const app = express();
 
-app.use(bodyParser.json());
+// ======================================================================
+//                    Passport Initialization
+// ======================================================================
+
+passport.use(new GoogleStrategy({
+  clientID: GOOGLE_CLIENT_ID,
+  clientSecret: GOOGLE_CLIENT_SECRET,
+  callbackURL: 'http://127.0.0.1:3000/auth/google/callback',
+  passReqToCallBack: true,
+}, (accessToken, refreshToken, userProfile, callback) => {
+  Promise.resolve(console.log('user profile:', userProfile))
+    .then((error, userProfile) => callback(null, userProfile));
+}));
+
+passport.serializeUser((user, done) => {
+  console.log('User: ', user.displayName); // If there is a persistent session, the console logs out the displayName
+  done(null, user.id);
+});
+
+passport.deserializeUser((obj, done) => {
+  done(null, obj);
+});
+
 app.use(express.static(path.join(__dirname, '/../client/dist')));
+app.use(bodyParser.json());
+app.use(session({ secret: 'chadam' }));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+// ======================================================================
+//                    User login to Google
+// ======================================================================
+
+// app.get(
+//   '/auth/google',
+  // (req, res, next) => {
+  //   console.log('login endpoint is working!');
+  //   next();
+  // },
+//   passport.authenticate('google', { scope: ['profile', 'email'] })
+// );
+
+app.get('/auth/google',
+  (req, res, next) => {
+    console.log('login endpoint is working!');
+    next();
+  },
+  passport.authenticate('google', { scope:
+    [ 'profile',
+      'email' ] }
+));
+
+
+app.get(
+  '/auth/google/callback',
+  (req, res, next) => {
+    console.log(req.user);
+    console.log('google callback endpoint is working!');
+    next();
+  },
+  passport.authenticate('google', { 
+    successRedirect: '/',
+    failureRedirect: '/' }),
+  (req, res) => res.redirect('/')
+);
 
 // ======================================================================
 //        Database Functions
@@ -103,6 +175,7 @@ app.get('/initialLoad', (req, res) => {
       });
     });
 });
+
 
 // ======================================================================
 //                    Query the DB on client filters

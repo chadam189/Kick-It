@@ -2,3 +2,5 @@ node_modules/
 config.js
 .DS_Store
 client/dist/bundle.js
+bundle.js
+sampleUserData.js
