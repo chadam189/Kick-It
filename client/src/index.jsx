@@ -31,58 +31,58 @@ class App extends React.Component {
 	}
 
 	componentDidMount() {
-		fetch('/initialLoad')
-			.then((response) => {
-				console.log('response received from server:', JSON.stringify(response));
-				return response.json();
-			})
-			.then((data) => {
-				console.log('data about to be put into todays state:', data.today);
-				 // creates massaged data for d3
-        const PieData = this.createD3Data(data.today);
-				this.setState({
-          featured: data.today,
-          PieData: PieData
-				})
-				return data;
-			})
-			.then((data) =>  {
-				let venueIDContainer = [];
-				let locationContainer = [];
-				let promiseContainer = [];
-				new Promise((resolve, reject) => {
-					data.today.forEach((event) => {
-					venueIDContainer.push(event.venue_id);
-				});	
-				venueIDContainer.forEach((venueID) => {
-					//venueID = Number(venueID);
-					axios.get(`https://www.eventbriteapi.com/v3/venues/${venueID}/?token=${RAWAPI}`)
-					.then((location) => {
-						locationContainer.push({ lat: Number(location.data.address.latitude), lng: Number(location.data.address.longitude)});
-					})
-				})
-				resolve(locationContainer)
-				}).then(() => {
-					this.setState({
-						venueLocations: locationContainer,
-						defaultLocation: locationContainer[0]
-					});
-				})
-			})
-		.then(() => {
-			fetch('/weekend')
-			.then((response) => {
-				console.log('data from API for weekend', response);
-				return response.json();
-			})
-			.then((data) => {
-				//console.log('data about to be put into weekend state: ' , data);
-				let events = JSON.parse(data).events;
-				this.setState({
-					weekend: events,
-				});
-			});
-		});
+		// fetch('/initialLoad')
+		// 	.then((response) => {
+		// 		console.log('response received from server:', JSON.stringify(response));
+		// 		return response.json();
+		// 	})
+		// 	.then((data) => {
+		// 		console.log('data about to be put into todays state:', data.today);
+		// 		 // creates massaged data for d3
+  //       const PieData = this.createD3Data(data.today);
+		// 		this.setState({
+  //         featured: data.today,
+  //         PieData: PieData
+		// 		})
+		// 		return data;
+		// 	})
+		// 	.then((data) =>  {
+		// 		let venueIDContainer = [];
+		// 		let locationContainer = [];
+		// 		let promiseContainer = [];
+		// 		new Promise((resolve, reject) => {
+		// 			data.today.forEach((event) => {
+		// 			venueIDContainer.push(event.venue_id);
+		// 		});	
+		// 		venueIDContainer.forEach((venueID) => {
+		// 			//venueID = Number(venueID);
+		// 			axios.get(`https://www.eventbriteapi.com/v3/venues/${venueID}/?token=${RAWAPI}`)
+		// 			.then((location) => {
+		// 				locationContainer.push({ lat: Number(location.data.address.latitude), lng: Number(location.data.address.longitude)});
+		// 			})
+		// 		})
+		// 		resolve(locationContainer)
+		// 		}).then(() => {
+		// 			this.setState({
+		// 				venueLocations: locationContainer,
+		// 				defaultLocation: locationContainer[0]
+		// 			});
+		// 		})
+		// 	})
+		// .then(() => {
+		// 	fetch('/weekend')
+		// 	.then((response) => {
+		// 		console.log('data from API for weekend', response);
+		// 		return response.json();
+		// 	})
+		// 	.then((data) => {
+		// 		//console.log('data about to be put into weekend state: ' , data);
+		// 		let events = JSON.parse(data).events;
+		// 		this.setState({
+		// 			weekend: events,
+		// 		});
+		// 	});
+		// });
 	}
 
 
@@ -222,22 +222,6 @@ class App extends React.Component {
 	render() {
 		return (
 			<div>
-				<h1>Kick It</h1>
-        <div>
-          {this.state.isLoggedIn ?
-            <div>
-              <h2>Welcome, YOU!</h2>
-              <button>Logout</button>
-            </div>
-            :
-            <div>
-              <a href="/auth/google">
-                <button>Login</button>  
-              </a>      
-            </div>
-           }
-        </div>
-        <SearchBarContainer runFilters={this.runFilters.bind(this)}/>
         <div className="album text-muted">
             <div className="charts">
               <Piechart data={this.state.PieData} />
@@ -246,23 +230,8 @@ class App extends React.Component {
                 selectPieData={this.selectPieData}
               />
             </div>
-						<EventListContainer 
-							featuredEvents={this.state.featured}
-							weekendEvents={this.state.weekend.slice(0,10)} 
-						/>
 					</div>
-					<div>
-  					<br />
-  					<EventMap
-  						venues={this.state.venueLocations}
-							defaultLocation={this.state.venueLocations[0]}
-              googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg&v=3.exp&libraries=geometry,drawing,places"
-              loadingElement={<div style={{ height: `100%` }} />}
-              containerElement={<div style={{ height: `500px` }} />}
-              mapElement={<div style={{ height: `100%` }} />}
-            />
 				</div>
-			</div>
       )
 	}
 }

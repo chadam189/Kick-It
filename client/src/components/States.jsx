@@ -87,7 +87,7 @@ realEventData.forEach((event) => {
   // console.log(`cat value: ${eventData[stateName][catName]}`)
 });
 
-console.log(`fuckin events: ${JSON.stringify(eventData, null, 2)}`);
+// console.log(`fuckin events: ${JSON.stringify(eventData, null, 2)}`);
 
 
 
@@ -174,7 +174,7 @@ class States extends Component {
   }
 
   mouseMoveEvent(data, e) {
-    console.log('mouse has moved!', e.clientX);
+    // console.log('mouse has moved!', e.clientX);
     const mouseX = e.clientX;
     const mouseY = e.clientY;
     const toolTipUS = document.getElementsByClassName('toolUS');

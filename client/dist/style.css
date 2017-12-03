@@ -158,16 +158,17 @@ img {
 }
 
 .Tree {
-  width: 1200px;
-  height: 1000px;
+  width: 1400px;
+  height: 1600px;
   float: left;
-  margin-left: 10px;
+  padding-left: 300px;
+  padding-top: 300px;
   border: 1px solid green;
+  transition: 0.1s;
 }
 
 .branch{
 /*  fill: lightsteelblue;
-  stroke: navy;*/
-  st/*roke: navy;
+  stroke: navy;
   stroke-width: 10;*/
   }
