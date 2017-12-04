@@ -25,7 +25,7 @@ class CategorySearch extends React.Component {
       <div className="col-6">
         <div className="form-check form-check-inline">
           <label className="form-check-label">
-           <input className="form-check-input" type="radio" id="inlineradio1" value="music" onChange={this.onCheck}/> Music
+           <input className="form-check-input" type="radio" id="inlineradio1" value="music" onChange={this.props.onCatClick} onClick={this.props.onCatClick}/> Music
 					</label>
 				</div>
 				<div className="form-check form-check-inline">

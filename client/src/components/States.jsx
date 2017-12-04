@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { min, max } from 'd3-array';
-import { interpolate } from 'd3-interpolate';
+import { interpolateLab } from 'd3-interpolate';
 import stateData from '../../../lib/stateData.js';
 import realEventData from '../../../sampleData/masterEventData.js';
 import _ from 'underscore';
@@ -11,11 +11,11 @@ import $ from 'jquery';
 // Sample data: links a state to categories with values
 // ===================
 // const sampleData = {};
-// const states = ['HI', 'AK', 'FL', 'SC', 'GA', 'AL', 'NC', 'TN', 'RI', 'CT', 'MA',
-//   'ME', 'NH', 'VT', 'NY', 'NJ', 'PA', 'DE', 'MD', 'WV', 'KY', 'OH',
-//   'MI', 'WY', 'MT', 'ID', 'WA', 'DC', 'TX', 'CA', 'AZ', 'NV', 'UT',
-//   'CO', 'NM', 'OR', 'ND', 'SD', 'NE', 'IA', 'MS', 'IN', 'IL', 'MN',
-//   'WI', 'MO', 'AR', 'OK', 'KS', 'LS', 'VA'];
+const states = ['HI', 'AK', 'FL', 'SC', 'GA', 'AL', 'NC', 'TN', 'RI', 'CT', 'MA',
+  'ME', 'NH', 'VT', 'NY', 'NJ', 'PA', 'DE', 'MD', 'WV', 'KY', 'OH',
+  'MI', 'WY', 'MT', 'ID', 'WA', 'DC', 'TX', 'CA', 'AZ', 'NV', 'UT',
+  'CO', 'NM', 'OR', 'ND', 'SD', 'NE', 'IA', 'MS', 'IN', 'IL', 'MN',
+  'WI', 'MO', 'AR', 'OK', 'KS', 'LS', 'VA'];
 // states.forEach((d) => {
 //   const low = Math.round(100 * Math.random());
 //   const mid = Math.round(100 * Math.random());
@@ -77,6 +77,8 @@ const eventData = {
     },
 };
 
+
+
 realEventData.forEach((event) => {
   const stateName = event[3];
   const catName = mapCatName(event[4]);
@@ -103,9 +105,44 @@ realEventData.forEach((event) => {
   // console.log(`cat value: ${eventData[stateName][catName]}`)
 });
 
-console.log(`fuckin event totals: ${JSON.stringify(eventData.total, null, 2)}`);
+states.forEach((val) => {
+  if (!eventData[val]) {
+    eventData[val] = {
+     'Science & Tech': null,
+     'Music': null,
+     'Movies': null,
+     'Art': null,
+     'Fashion': null,
+     'Sports & Fitness': null,
+     'Travel & Outdoors': null,
+     'Food & Drink': null,
+     'Charity': null,
+     'Community Events': null,
+     'Holiday': null,
+     'Auto, Boat, Air': null,
+    };
+  }
+});
 
+// console.log(`event totals: ${JSON.stringify(eventData.total, null, 2)}`);
 
+const currentCat = 'Music';
+let maxVal = 0, arrVal = [];
+for (let key in eventData) {
+  arrVal.push(eventData[key][currentCat]);
+  if (key !== 'total' && key !== 'CA') {
+    if (maxVal < eventData[key][currentCat]) {
+      maxVal = eventData[key][currentCat];
+    }
+  }
+}
+
+maxVal = 80;
+
+arrVal = arrVal.sort((a, b) => (a - b));
+
+console.log(`max val for ${currentCat} = , ${maxVal}`);
+console.log(`arr val = ${JSON.stringify(arrVal, null, 2)}`);
 
     // 102 - Science & Tech
     // 103 - Music
@@ -189,6 +226,19 @@ function colorSelector(label) {
   // return color;
 }
 
+function catColorInterpolate (stateName) {
+  const val = eventData[stateName][currentCat];
+
+
+  // console.log(`state name = ${stateName}, ${val}`);
+  let ratio = (val >= 5) ? (val / maxVal) : ((Math.random() * 0.3) + 0.2);
+  if (val > 80) {
+    ratio = (Math.random() * 0.1) + 0.9;
+  }
+  return interpolateLab("white", "green")(ratio);
+  // return "blue";
+}
+
 
 class States extends Component {
   constructor(props) {
@@ -234,12 +284,19 @@ class States extends Component {
   render() {
     return (
       <div className="map">
+        {
+
+        this.props.catClickStatus
+
+        ? 
+
         <svg className="States"  transform="scale(0.6)">
             {stateData.map(state => {
               return (
                 <path
-                  stroke="white"
-                  fill={colorSelector(state.id)}
+                  stroke="black"
+                  // fill={colorSelector(state.id)}
+                  fill={catColorInterpolate(state.id)}
                   className="state"
                   key={state.id}
                   d={dataReturn(state)}
@@ -251,6 +308,31 @@ class States extends Component {
               );
             })}
         </svg>
+
+
+        : 
+
+
+        <svg className="States"  transform="scale(0.6)">
+            {stateData.map(state => {
+              return (
+                <path
+                  stroke="white"
+                  fill={colorSelector(state.id)}
+                  // fill={catColorInterpolate(state.id)}
+                  className="state"
+                  key={state.id}
+                  d={dataReturn(state)}
+                  onMouseEnter={(e) => { this.mouseEnterEvent(state, e); }}
+                  onMouseMove={(e) => { this.mouseMoveEvent(state, e); }}
+                  onMouseLeave={() => { this.mouseLeaveEvent(); }}
+                  onClick={() => { this.props.selectPieData(formatDataForPie(state.id)); }}
+                />
+              );
+            })}
+        </svg>
+
+        }
       </div>);
   }
 }

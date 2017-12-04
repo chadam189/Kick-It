@@ -18,7 +18,7 @@ class App extends React.Component {
 		this.state = {
 			featured: [],
 			weekend: [],
-			isLoggedIn: false,
+			isCatSelected: false,
       userFirstName: '',
 			venueLocations: [],
 			defaultLocation: { lat: 37.7749, lng: -122.4194 },
@@ -216,7 +216,14 @@ class App extends React.Component {
   selectPieData(data) {
     this.setState({
       PieData: data
-    })
+    });
+  }
+
+  onCatClick() {
+    console.log('clicked YO');
+  	this.setState({
+  		isCatSelected: true,
+  	});
   }
 
 
@@ -238,13 +245,17 @@ class App extends React.Component {
             </div>
            }
         </div>
-        <SearchBarContainer runFilters={this.runFilters.bind(this)}/>
+        <SearchBarContainer 
+          runFilters={this.runFilters.bind(this)}
+          onCatClick={this.onCatClick.bind(this)}
+        />
         <div className="album text-muted">
             <div className="charts">
               <Piechart data={this.state.PieData} />
               <States 
                 data={this.state.StatesData}
                 selectPieData={this.selectPieData}
+                catClickStatus={this.state.isCatSelected}
               />
             </div>
 						<EventListContainer 

@@ -35,7 +35,10 @@ class SearchBarContainer extends React.Component {
         <div className="row">
           <DateSearch onChange={this.onChange} />
           <CitySearch onChange={this.onChange} />
-          <CategorySearch onChange={this.onChange} />
+          <CategorySearch 
+            onChange={this.onChange}
+            onCatClick={this.props.onCatClick}
+          />
           <PriceSearch onChange={this.onChange} />
           <button type="button" onClick={this.onClick}>Search</button>
         </div>

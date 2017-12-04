@@ -264,7 +264,7 @@ app.post('/filter', (request, response) => {
           });
       }
     }).catch((err) => {
-      console.log('Error in the filter searchEventsByCity')
+      console.log('Error in the filter searchEventsByCity', err)
     });
   }
 });
