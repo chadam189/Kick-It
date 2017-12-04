@@ -191,15 +191,16 @@ class Tree extends Component {
   render() {
     createBranch(seed);
     // console.log(`final paths of branches: ${JSON.stringify(branches, null, 2)}`);
+        // <button onClick={() => this.regenerateTree()}>Regenerate</button>
     return (
       <div>
-        <button onClick={() => this.regenerateTree()}>Regenerate</button>
         <div>
           <svg className="Tree" transform="scale(2)">
             {branches.map((branch, index) => {
               const sw = {
                 strokeWidth: branchWidth(branch, index),
                 // stroke: '#663300',
+                // stroke: "darkgreen",
                 stroke: colorSelector(),
               };
               // console.log('sw: ', sw.strokeWidth);

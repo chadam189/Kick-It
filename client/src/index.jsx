@@ -224,6 +224,7 @@ class App extends React.Component {
 			<div>
         <div className="album text-muted">
             <div className="charts">
+            <Tree />
               <Piechart data={this.state.PieData} />
               <States 
                 data={this.state.StatesData}

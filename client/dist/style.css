@@ -82,7 +82,7 @@ img {
   /*transition: 0.1s;*/
   opacity: 0.9;
   /*transition-duration: 600ms;*/
-  visibility: visible; 
+  visibility: hidden; 
 }
 
 .toolTree {
@@ -162,7 +162,7 @@ img {
   height: 1600px;
   float: left;
   padding-left: 300px;
-  padding-top: 300px;
+  padding-top: 250px;
   border: 1px solid green;
   transition: 0.1s;
 }
