@@ -20,7 +20,7 @@ import { arc, pie } from 'd3-shape';
 // D3 Math
 // ===================
 
-const color = scaleOrdinal(['#98abc5', '#8a89a6', '#7b6888', '#6b486b', '#a05d56', '#d0743c', '#ff8c00']);
+const color = scaleOrdinal(['lightgreen', 'yellow', 'silver', 'red', 'pink', 'navy', 'darkgreen', 'orange', 'purple', 'lightblue', 'brown', 'black']);
 const width = 600;
 const height = 600;
 const radius = Math.min(width - 200, height - 200) / 2;
@@ -72,12 +72,12 @@ class Piechart extends Component {
   // Mouse Over Event Listener
   // Changes hover to true, updates selection with the hovered tile data
   // ===================
-  mouseOverEvent(d, e) {
-    this.setState({
-      hover: true,
-      selection: { d: d, label: d.data.label, value: d.value }
-    });
-  }
+  // mouseOverEvent(d, e) {
+  //   this.setState({
+  //     hover: true,
+  //     selection: { d: d, label: d.data.label, value: d.value }
+  //   });
+  // }
 
   // ===================
   // Mouse Exit Event Listener
@@ -93,7 +93,7 @@ class Piechart extends Component {
   render() {
     return (
       <div className="pie">
-        <div>{this.state.hover && <ToolTipPie data={this.state.selection} />}</div>
+      
         <svg className="Piechart" width={width} heigth={height} >
           <g transform={`translate(${(width) / 2}, ${(height) / 2})`}>
             {pieChart(this.props.data).map((d, i) => {
@@ -102,7 +102,7 @@ class Piechart extends Component {
               const center = dataArc.centroid(d);
               const cx = center[0];
               const cy = center[1];
-              const labelRadius = 230;
+              const labelRadius = 240;
               const h = Math.sqrt((cx * cx) + (cy * cy));
               const labelPosition1 = [((cx / h) * labelRadius), ((cy / h) * labelRadius)];
               const labelPosition2 = [((cx / h) * (labelRadius + 30)), ((cy / h) * (labelRadius + 30))];
@@ -121,7 +121,7 @@ class Piechart extends Component {
                     dy=".15em"
                     transform={`translate(${(i % 2) ? labelPosition1 : labelPosition2})`}
                   >
-                    {d.value !== 0 && d.data.label}
+                    {d.value !== 0 && `${d.data.label}: ${d.value}`}
                   </text>
                 </g>
               );

@@ -10,27 +10,27 @@ import $ from 'jquery';
 // ===================
 // Sample data: links a state to categories with values
 // ===================
-const sampleData = {};
-const states = ['HI', 'AK', 'FL', 'SC', 'GA', 'AL', 'NC', 'TN', 'RI', 'CT', 'MA',
-  'ME', 'NH', 'VT', 'NY', 'NJ', 'PA', 'DE', 'MD', 'WV', 'KY', 'OH',
-  'MI', 'WY', 'MT', 'ID', 'WA', 'DC', 'TX', 'CA', 'AZ', 'NV', 'UT',
-  'CO', 'NM', 'OR', 'ND', 'SD', 'NE', 'IA', 'MS', 'IN', 'IL', 'MN',
-  'WI', 'MO', 'AR', 'OK', 'KS', 'LS', 'VA'];
-states.forEach((d) => {
-  const low = Math.round(100 * Math.random());
-  const mid = Math.round(100 * Math.random());
-  const high = Math.round(100 * Math.random());
-  sampleData[d] = {
-    Music: Math.round(100 * Math.random()),
-    Food: Math.round(100 * Math.random()),
-    Community: Math.round(100 * Math.random()),
-    Dating: Math.round(100 * Math.random()),
-    Entertainment: Math.round(100 * Math.random()),
-    Science: Math.round(100 * Math.random()),
-    AutoBoatAir: Math.round(100 * Math.random()),
-    Active: Math.round(100 * Math.random())
-  };
-});
+// const sampleData = {};
+// const states = ['HI', 'AK', 'FL', 'SC', 'GA', 'AL', 'NC', 'TN', 'RI', 'CT', 'MA',
+//   'ME', 'NH', 'VT', 'NY', 'NJ', 'PA', 'DE', 'MD', 'WV', 'KY', 'OH',
+//   'MI', 'WY', 'MT', 'ID', 'WA', 'DC', 'TX', 'CA', 'AZ', 'NV', 'UT',
+//   'CO', 'NM', 'OR', 'ND', 'SD', 'NE', 'IA', 'MS', 'IN', 'IL', 'MN',
+//   'WI', 'MO', 'AR', 'OK', 'KS', 'LS', 'VA'];
+// states.forEach((d) => {
+//   const low = Math.round(100 * Math.random());
+//   const mid = Math.round(100 * Math.random());
+//   const high = Math.round(100 * Math.random());
+//   sampleData[d] = {
+//     Music: Math.round(100 * Math.random()),
+//     Food: Math.round(100 * Math.random()),
+//     Community: Math.round(100 * Math.random()),
+//     Dating: Math.round(100 * Math.random()),
+//     Entertainment: Math.round(100 * Math.random()),
+//     Science: Math.round(100 * Math.random()),
+//     AutoBoatAir: Math.round(100 * Math.random()),
+//     Active: Math.round(100 * Math.random())
+//   };
+// });
 
 const mapCatName = (categoryNumber) => {
   if (categoryNumber === 102) {
@@ -60,7 +60,22 @@ const mapCatName = (categoryNumber) => {
   }
 };
 
-const eventData = {};
+const eventData = {
+  total:  {
+     'Science & Tech': 0,
+     'Music': 0,
+     'Movies': 0,
+     'Art': 0,
+     'Fashion': 0,
+     'Sports & Fitness': 0,
+     'Travel & Outdoors': 0,
+     'Food & Drink': 0,
+     'Charity': 0,
+     'Community Events': 0,
+     'Holiday': 0,
+     'Auto, Boat, Air': 0,
+    },
+};
 
 realEventData.forEach((event) => {
   const stateName = event[3];
@@ -84,10 +99,11 @@ realEventData.forEach((event) => {
     };
   }
   eventData[stateName][catName]++;
+  eventData.total[catName]++;
   // console.log(`cat value: ${eventData[stateName][catName]}`)
 });
 
-console.log(`fuckin events: ${JSON.stringify(eventData, null, 2)}`);
+console.log(`fuckin event totals: ${JSON.stringify(eventData.total, null, 2)}`);
 
 
 
@@ -135,15 +151,42 @@ function formatDataForPie(id) {
 
 function colorSelector(label) {
 
-  // this.props.data will be the obj with the data to calculate color intensities
-  // this.props.data[label] should give an object {category1: value, category2: value, ...}
+  const maxCategoryValue = {
+    label: '',
+    value: 0
+  };
 
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
+
+  for (let key in eventData[label]) {
+    if (eventData[label][key] > maxCategoryValue.value) {
+      maxCategoryValue.label = key;
+      maxCategoryValue.value = eventData[label][key];
+    }
   }
-  return color;
+
+  const categoryColors = {
+    'Science & Tech': 'lightgreen',
+     'Music': 'yellow',
+     'Movies': 'silver',
+     'Art': 'red',
+     'Fashion': 'pink',
+     'Sports & Fitness': 'navy',
+     'Travel & Outdoors': 'darkgreen',
+     'Food & Drink': 'orange',
+     'Charity': 'purple',
+     'Community Events': 'lightblue',
+     'Holiday': 'brown',
+     'Auto, Boat, Air': 'black',
+  };
+
+  return maxCategoryValue.value ? categoryColors[maxCategoryValue.label] : 'red';
+
+  // const letters = '0123456789ABCDEF';
+  // let color = '#';
+  // for (let i = 0; i < 6; i++) {
+  //   color += letters[Math.floor(Math.random() * 16)];
+  // }
+  // return color;
 }
 
 
@@ -156,6 +199,11 @@ class States extends Component {
       // mouseX: 0,
       // mouseY: 0,
     };
+  }
+
+  componentDidMount () {
+    console.log('this pops up when States is about to mount');
+    this.props.selectPieData(formatDataForPie('total'));
   }
 
 
@@ -174,7 +222,7 @@ class States extends Component {
   }
 
   mouseMoveEvent(data, e) {
-    console.log('mouse has moved!', e.clientX);
+    // console.log('mouse has moved!', e.clientX);
     const mouseX = e.clientX;
     const mouseY = e.clientY;
     const toolTipUS = document.getElementsByClassName('toolUS');
@@ -186,12 +234,11 @@ class States extends Component {
   render() {
     return (
       <div className="map">
-        <div>{this.state.hover === true && <ToolTipUS data={this.state.selection} />}</div>
         <svg className="States"  transform="scale(0.6)">
             {stateData.map(state => {
               return (
                 <path
-                  stroke={colorSelector(state.id)}
+                  stroke="white"
                   fill={colorSelector(state.id)}
                   className="state"
                   key={state.id}

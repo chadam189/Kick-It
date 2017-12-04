@@ -24,7 +24,8 @@ class App extends React.Component {
 			defaultLocation: { lat: 37.7749, lng: -122.4194 },
       PieData: [],
       StatesData: {},
-      CountiesData: {}
+      CountiesData: {},
+      category: 'all',
 		}
 
     this.selectPieData = this.selectPieData.bind(this);
@@ -42,7 +43,7 @@ class App extends React.Component {
         const PieData = this.createD3Data(data.today);
 				this.setState({
           featured: data.today,
-          PieData: PieData
+          // PieData: PieData
 				})
 				return data;
 			})
